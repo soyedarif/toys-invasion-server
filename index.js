@@ -28,13 +28,18 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     const toyGalleryCollection=client.db('toyInvasion').collection('toyGallery');
-    
+    const toysCollection=client.db('toyInvasion').collection('toys');
+//toyGallery
     app.get('/toyGallery',async (req,res)=>{
-        const cursor=toyGalleryCollection.find()
-        console.log(cursor);
-        const result = await cursor.toArray()
+        const result = await toyGalleryCollection.find().toArray()
         res.send(result)
     })
+//toys
+app.get('/toys', async (req, res) => {
+    const { category } = req.query;
+    const result = await toysCollection.find({ category: category }).toArray();
+    res.send(result);
+  });
 
 
     await client.db("admin").command({ ping: 1 });
