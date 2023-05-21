@@ -4,13 +4,13 @@ require("dotenv").config();
 
 const app=express();
 const port= process.env.PORT || 5000
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(cors())
 app.use(express.json())
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2l3te9a.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -36,6 +36,7 @@ async function run() {
     })
 //toys
 
+
 app.get('/toys', async (req, res) => {
     const { category } = req.query;
     const limit = parseInt(req.query.limit);
@@ -58,6 +59,19 @@ app.get('/toys', async (req, res) => {
   
     res.send(result);
   });
+  app.get('/toys/:id', async(req,res)=>{
+    const id =req.params.id;
+    const query= {_id: new ObjectId(id)}
+    const result= await toysCollection.findOne(query);
+    res.send(result)
+  })
+  //toy add
+  app.post('/toys',async(req,res)=>{
+    const toy=req.body;
+    const result = await toysCollection.insertOne(toy)
+    res.send(result)
+  })
+  
   
 
 
