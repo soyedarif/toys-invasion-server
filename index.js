@@ -34,8 +34,9 @@ async function run() {
     });
     //toys
 
+    
     app.get('/toys', async (req, res) => {
-      const { category, email, limit, sort } = req.query;
+      const { category, email, limit, sort, search } = req.query;
     
       let query = {};
     
@@ -45,6 +46,10 @@ async function run() {
     
       if (email) {
         query.email = email;
+      }
+    
+      if (search) {
+        query.name = { $regex: search, $options: 'i' }; // Case-insensitive search by toy name
       }
     
       let sortOption = {};
@@ -67,7 +72,6 @@ async function run() {
     
       res.send(result);
     });
-    
       
     app.get("/toys/:id", async (req, res) => {
       const id = req.params.id;
