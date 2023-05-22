@@ -34,40 +34,6 @@ async function run() {
     });
     //toys
 
- 
-    // app.get('/toys', async (req, res) => {
-    //     const { category, email, limit, sort } = req.query;
-      
-    //     let query = {};
-      
-    //     if (category) {
-    //       query.category = category;
-    //     }
-      
-    //     if (email) {
-    //       query.email = email;
-    //     }
-      
-    //     let sortOption = {};
-
-    //     if (sort === 'asc') {
-    //       sortOption.price = 1; // Sort by price in ascending order
-    //     } else if (sort === 'desc') {
-    //       sortOption.price = -1; // Sort by price in descending order
-    //     }
-
-    //     let result;
-      
-    //     if (category) {
-    //       result = await toysCollection.find(query).toArray();
-    //     } else if (limit) {
-    //       result = await toysCollection.find().limit(parseInt(limit)).toArray();
-    //     } else {
-    //       result = await toysCollection.find(query).sort(sortOption).toArray();
-    //     }
-      
-    //     res.send(result);
-    //   });
     app.get('/toys', async (req, res) => {
       const { category, email, limit, sort } = req.query;
     
@@ -116,11 +82,24 @@ async function run() {
         const result = await toysCollection.insertOne(toy);
         res.send(result);
     });
+    app.put('/toys/:id',async(req,res)=>{
+      const id=req.params.id;
+      const filter={_id: new ObjectId(id)}
+      const options={upsert:true}
+      const updatedToy=req.body
+      const toy={
+        $set:{
+          price: updatedToy.price,
+          quantity: updatedToy.quantity,
+          description: updatedToy.description,
+        }
+      }
+      const result = await toysCollection.updateOne(filter,toy,options);
+      res.send(result)
+    })
     app.delete('/toys/:id', async(req,res)=>{
         const id= req.params.id
-        console.log(`Please delete from DB`, id);
         const query={_id: new ObjectId(id)}
-
         const result= await toysCollection.deleteOne(query)
         res.send(result)
     })
